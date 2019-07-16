@@ -86,12 +86,19 @@ def train_convnet_GZOO(X,Y,ntrain,nval,test_name,weights_file_name):
     print("Model Summary")
     print("===================")
     model.summary()
+    
+    
+    # Define non-trainable layers
+    for layer in model.layers[:Nlayer]:     
+        layer.trainable = False
 
-
+    # Transfer learning: recover weights from previus model
     if os.path.isfile(weights_file_name) and RECOVER_MODEL:
         print("Loading model", weights_file_name)
         model.load_weights(weights_file_name)
-
+        
+        
+   #Data Augmentation
     if not data_augmentation:
         print('Not using data augmentation.')
         history = model.fit(X_train, Y_train,
@@ -129,9 +136,8 @@ def train_convnet_GZOO(X,Y,ntrain,nval,test_name,weights_file_name):
                 )
 
 
-
-    print("Saving model...")
     # save weights
+    print("Saving model...")
     model.save_weights(test_name+".hd5",overwrite=True)
     
         
